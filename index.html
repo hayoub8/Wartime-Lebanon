@@ -1,87 +1,350 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Wartime Lebanon — Behind The Lines</title>
+  <meta name="description" content="Wartime Lebanon: news, long‑form articles, and interactive maps. Behind The Lines." />
+  <meta property="og:title" content="Wartime Lebanon — Behind The Lines" />
+  <meta property="og:description" content="News, analyses, and maps about the conflict. Premium map available for members." />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#d90429" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23d90429'/%3E%3Cpath d='M10 70 L40 40 L55 55 L90 20' stroke='white' stroke-width='8' fill='none'/%3E%3C/svg%3E" />
+  <style>
+    :root{
+      --red:#d90429; --red-700:#a0031f; --black:#0b0b0d; --surface:#111114;
+      --card:#17171b; --muted:#9aa0a6; --white:#ffffff; --radius:20px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 80% -10%, rgba(217,4,41,.12), transparent 60%) , var(--surface);
+      color:var(--white); line-height:1.6;}
+    a{color:var(--white); text-decoration:none} img{max-width:100%; display:block}
+    .container{width:min(1200px, 92%); margin-inline:auto}
+    header{position:sticky; top:0; z-index:40; backdrop-filter: blur(6px);
+      background:linear-gradient(180deg, rgba(11,11,13,.85), rgba(11,11,13,.6));
+      border-bottom:1px solid rgba(255,255,255,.07);}
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:12px}
+    .brand .logo{width:40px; height:40px; display:grid; place-items:center; border-radius:12px;
+      background:conic-gradient(from 210deg, var(--red), var(--red-700)); box-shadow: var(--shadow);}
+    .brand h1{margin:0; font-size:1.1rem; letter-spacing:.5px}
+    .tagline{color:var(--muted); font-size:.9rem}
+    nav ul{display:flex; gap:14px; list-style:none; margin:0; padding:0}
+    nav a{padding:8px 12px; border-radius:999px; display:inline-block; font-weight:600; letter-spacing:.2px}
+    nav a:hover{background:rgba(255,255,255,.06)} .cta{background:var(--red);} .cta:hover{background:var(--red-700)}
+    .hamburger{display:none}
+    .hero{position:relative; padding:42px 0 22px}
+    .hero h2{font-size:2.2rem; line-height:1.2; margin:0 0 10px}
+    .hero p{color:#d6d8db; margin:0} .meta-line{display:flex; gap:18px; color:var(--muted); font-size:.92rem; margin-top:8px}
+    section{padding:26px 0}
+    .section-title{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+    .section-title h3{margin:0; font-size:1.3rem; letter-spacing:.3px}
+    .section-title .actions{display:flex; gap:10px}
+    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:16px}
+    .card{background:var(--card); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); overflow:hidden; box-shadow: var(--shadow)}
+    .card:hover{transform:translateY(-2px); transition:transform .2s ease}
+    .card .body{padding:14px}
+    .eyebrow{color:var(--red); font-weight:700; text-transform:uppercase; letter-spacing:.8px; font-size:.8rem}
+    .title{font-size:1.05rem; margin:6px 0 6px}
+    .muted{color:var(--muted); font-size:.92rem}
+    .badge{background:rgba(217,4,41,.18); border:1px solid rgba(217,4,41,.4); color:#ffd7df; padding:2px 8px; border-radius:999px; font-size:.75rem}
+    .list{display:flex; flex-direction:column; gap:10px}
+    .list-item{display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:14px}
+    .list-item:hover{background:rgba(255,255,255,.04)}
+    .toolbar{display:flex; flex-wrap:wrap; gap:10px}
+    .input{background:var(--card); border:1px solid rgba(255,255,255,.09); color:var(--white); padding:10px 12px; border-radius:12px; outline:none}
+    .input:focus{box-shadow:0 0 0 3px rgba(217,4,41,.4)}
+    .chip{padding:8px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.12); cursor:pointer}
+    .chip.active{background:var(--red); border-color:transparent}
+    .map-embed{aspect-ratio:16/9; width:100%; background:linear-gradient(180deg, #0e0e11, #0a0a0d); display:grid; place-items:center; color:#c1c5ca}
+    .locked{position:relative}
+    .locked::after{content:"Premium — Members Only"; position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+      background:linear-gradient(rgba(11,11,13,.6), rgba(11,11,13,.8)); border:2px dashed rgba(255,255,255,.15);
+      border-radius:var(--radius); margin:6px; font-weight:700; letter-spacing:.4px}
+    footer{padding:28px 0 50px; color:#c9cdd3}
+    .footer-grid{display:grid; grid-template-columns: 1.2fr .8fr .8fr; gap:18px}
+    .small{font-size:.92rem; color:#aeb3ba}
+    dialog{border:none; padding:0; background:transparent}
+    .modal{background:var(--card); border:1px solid rgba(255,255,255,.1); border-radius:20px; box-shadow:var(--shadow); width:min(520px, 94vw)}
+    .modal header{position:unset; background:unset; border:none}
+    .modal .content{padding:16px}
+    .row{display:flex; gap:10px}
+    .btn{background:#232329; border:1px solid rgba(255,255,255,.12); color:var(--white); padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer}
+    .btn:hover{filter:brightness(1.1)} .btn.primary{background:var(--red); border-color:transparent} .btn.ghost{background:transparent}
+    @media (max-width:900px){.footer-grid{grid-template-columns:1fr 1fr} nav ul{display:none} .hamburger{display:inline-flex}}
+    @media (max-width:640px){.grid{grid-template-columns:repeat(6,1fr)} .hero h2{font-size:1.6rem}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Wartime Lebanon</h1>
+          <div class="tagline">“Behind The Lines”</div>
+        </div>
+      </div>
+      <nav>
+        <button class="btn hamburger" aria-label="Open menu" onclick="toggleMenu()">☰</button>
+        <ul id="mainNav">
+          <li><a href="#news">News</a></li>
+          <li><a href="#articles">Articles</a></li>
+          <li><a href="#maps">Maps</a></li>
+          <li><a href="#premium">Premium Map</a></li>
+          <li><a href="/admin/">Admin</a></li>
+          <li><a class="cta" href="#subscribe" onclick="openSubscribe()">Subscribe</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-  <head>
-    <meta charset="utf-8" />
-    <title>Wartime Lebanon CMS</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Netlify Identity (login) -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <!-- Decap (Netlify) CMS -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  </head>
+  <section class="hero">
+    <div class="container">
+      <h2>Your front line source for conflict news, deep-dive analysis, and operational maps.</h2>
+      <div class="meta-line">
+        <span class="badge">Live</span>
+        <span id="now"></span>
+      </div>
+    </div>
+  </section>
 
-  <body></body>
+  <main class="container">
+    <section class="toolbar" aria-label="Filters & search">
+      <input id="search" class="input" type="search" placeholder="Search news & articles… (e.g., border, airstrike)" oninput="renderAll()" />
+      <div class="chip active" data-filter="all" onclick="setFilter(this)">All</div>
+      <div class="chip" data-filter="news" onclick="setFilter(this)">News</div>
+      <div class="chip" data-filter="article" onclick="setFilter(this)">Articles</div>
+      <div class="chip" data-filter="map" onclick="setFilter(this)">Maps</div>
+    </section>
+
+    <section id="news">
+      <div class="section-title">
+        <h3>Latest News</h3>
+        <div class="actions"><button class="btn ghost" onclick="shuffle('news')">Shuffle</button></div>
+      </div>
+      <div id="newsGrid" class="grid"></div>
+    </section>
+
+    <section id="articles">
+      <div class="section-title">
+        <h3>Featured Articles</h3>
+        <div class="actions"><button class="btn ghost" onclick="shuffle('articles')">Shuffle</button></div>
+      </div>
+      <div id="articlesList" class="list"></div>
+    </section>
+
+    <section id="maps">
+      <div class="section-title">
+        <h3>Interactive Maps</h3>
+        <div class="actions">
+          <button class="btn ghost" onclick="alert('Replace with your map embed or link')">How to embed?</button>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card" style="grid-column: span 12;">
+          <div class="body">
+            <div class="eyebrow">Live Map</div>
+            <h4 class="title">Frontline Situation (Public)</h4>
+            <p class="muted">Embed your public map here (QGIS Cloud, GIS Cloud, Leaflet, MapLibre, etc.).</p>
+          </div>
+          <div class="map-embed">
+            <iframe title="Public Map" srcdoc="<style>html,body{margin:0;height:100%;background:%23090;color:#fff;display:grid;place-items:center;font:16px system-ui}</style><div>Map placeholder — paste your embed iframe here</div>" style="border:0; width:100%; height:100%;"></iframe>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="premium">
+      <div class="section-title">
+        <h3>Premium Map — Members Only</h3>
+        <div class="actions">
+          <button class="btn primary" onclick="openSubscribe()">Subscribe to Unlock</button>
+          <button class="btn" onclick="simulateLogin()">I already subscribed</button>
+        </div>
+      </div>
+      <article class="card locked" id="premiumCard">
+        <div class="body">
+          <div class="eyebrow">Premium</div>
+          <h4 class="title">Operational Map (Restricted)</h4>
+          <p class="muted">Subscribers get high-frequency updates, high-zoom layers, and archive access.</p>
+        </div>
+        <div class="map-embed">
+          <iframe title="Premium Map" id="premiumFrame" style="border:0; width:100%; height:100%;" srcdoc="<style>html,body{margin:0;height:100%;background:#07080a;color:#eee;display:grid;place-items:center;font:16px system-ui}</style><div>Locked • Subscribe to view</div>"></iframe>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="margin-bottom:8px">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <strong>Wartime Lebanon</strong>
+            <div class="small">Behind The Lines</div>
+          </div>
+        </div>
+        <div class="small">© <span id="year"></span> Wartime Lebanon. All rights reserved.</div>
+      </div>
+      <div>
+        <div class="small">Contact</div>
+        <div class="small">Email: contact@wartimelebanon.example</div>
+        <div class="small">Telegram / X: @wartimelebanon</div>
+      </div>
+      <div>
+        <div class="small">Legal</div>
+        <div class="small"><a href="#" onclick="openTOS(); return false;">Terms of Service</a></div>
+        <div class="small"><a href="#" onclick="openPrivacy(); return false;">Privacy Policy</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <dialog id="articleModal">
+    <div class="modal">
+      <header class="topbar" style="padding:12px 16px">
+        <strong id="modalEyebrow" class="eyebrow"></strong>
+        <button class="btn ghost" onclick="closeArticle()">✕</button>
+      </header>
+      <div class="content" style="padding-top:0">
+        <h3 id="modalTitle" style="margin-top:0"></h3>
+        <div id="modalMeta" class="muted" style="margin-bottom:10px"></div>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="subscribeModal">
+    <div class="modal">
+      <header class="topbar" style="padding:12px 16px">
+        <strong>Subscribe to Premium</strong>
+        <button class="btn ghost" onclick="closeSubscribe()">✕</button>
+      </header>
+      <div class="content">
+        <p class="muted">Demo only — this simulates a paywall. Replace with your real payment provider (e.g., Lemon Squeezy, Paddle, Stripe Checkout) later.</p>
+        <label>Email<br>
+          <input id="subEmail" class="input" placeholder="you@example.com" type="email" style="width:100%" />
+        </label>
+        <div style="height:8px"></div>
+        <label>Access code (demo: <code>WARTIME</code>)<br>
+          <input id="subCode" class="input" placeholder="Enter access code" type="text" style="width:100%" />
+        </label>
+        <div style="height:14px"></div>
+        <div class="row">
+          <button class="btn primary" onclick="completeSubscribe()">Unlock Premium</button>
+          <button class="btn" onclick="closeSubscribe()">Maybe later</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <script>
-    // Send users back to /admin after logging in
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on("init", user => {
-        if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
-        }
-      });
+    // ===== CMS content (loaded from JSON committed by Decap/Netlify CMS) =====
+    const DATA = { news: [], articles: [] };
+
+    async function loadCMS() {
+      const [newsRes, articlesRes] = await Promise.all([
+        fetch('/content/news.json', { cache: 'no-store' }),
+        fetch('/content/articles.json', { cache: 'no-store' }),
+      ]);
+      const newsJson = await newsRes.json();
+      const articlesJson = await articlesRes.json();
+      DATA.news = (newsJson.items || []).map(x => ({
+        id: x.id, tag: x.tag || 'Update', title: x.title, ts: x.ts, excerpt: x.excerpt || ''
+      }));
+      DATA.articles = (articlesJson.items || []).map(x => ({
+        id: x.id, title: x.title, author: x.author || 'Wartime Lebanon Desk', ts: x.ts, body: (x.body || '')
+      }));
     }
 
-    // === INLINE CMS CONFIG (no config.yml needed) ===
-    window.CMS_MANUAL_INIT = true;
-    CMS.init({
-      config: {
-        backend: { name: "git-gateway", branch: "main" },
-        media_folder: "static/uploads",
-        public_folder: "/uploads",
-        collections: [
-          {
-            name: "sitecontent",
-            label: "Site Content",
-            files: [
-              {
-                name: "news",
-                label: "News",
-                file: "content/news.json",
-                format: "json",
-                fields: [
-                  {
-                    name: "items",
-                    label: "News Items",
-                    widget: "list",
-                    fields: [
-                      { name: "id", label: "ID", widget: "string" },
-                      { name: "tag", label: "Tag", widget: "string", default: "Update" },
-                      { name: "title", label: "Title", widget: "string" },
-                      { name: "ts", label: "Date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
-                      { name: "excerpt", label: "Summary", widget: "text" }
-                    ]
-                  }
-                ]
-              },
-              {
-                name: "articles",
-                label: "Articles",
-                file: "content/articles.json",
-                format: "json",
-                fields: [
-                  {
-                    name: "items",
-                    label: "Articles",
-                    widget: "list",
-                    fields: [
-                      { name: "id", label: "ID", widget: "string" },
-                      { name: "title", label: "Title", widget: "string" },
-                      { name: "author", label: "Author", widget: "string", default: "Wartime Lebanon Desk" },
-                      { name: "ts", label: "Date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
-                      { name: "body", label: "Body", widget: "markdown" }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    });
-  </script>
+    // ===== Utilities & UI logic (unchanged) =====
+    const $ = (sel)=>document.querySelector(sel);
+    const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
+    const fmtDate = (iso)=> new Date(iso+'T12:00:00Z').toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
 
+    function toggleMenu(){ const nav = document.getElementById('mainNav'); const showing = getComputedStyle(nav).display !== 'none'; nav.style.display = showing ? 'none' : 'flex'; }
+    let currentFilter = 'all';
+    function setFilter(el){ $$('.chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); currentFilter = el.dataset.filter; renderAll(); }
+    function shuffle(key){ const arr = DATA[key]; for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]} renderAll(); }
+    function matchesSearch(text){ const q = $('#search').value.trim().toLowerCase(); if(!q) return true; return text.toLowerCase().includes(q); }
+
+    function renderNews(){
+      const grid = document.getElementById('newsGrid'); grid.innerHTML = '';
+      DATA.news.filter(n => (currentFilter==='all' || currentFilter==='news') && matchesSearch(n.title+' '+n.excerpt))
+        .forEach(n=>{
+          const card = document.createElement('article'); card.className = 'card'; card.style.gridColumn = 'span 4';
+          card.innerHTML = `
+            <div class="body">
+              <div class="eyebrow">${n.tag}</div>
+              <h4 class="title">${n.title}</h4>
+              <div class="muted">${fmtDate(n.ts)}</div>
+              <p class="muted">${n.excerpt}</p>
+              <div class="row"><button class="btn" onclick="openArticle('${n.id}', 'news')">Open</button></div>
+            </div>`;
+          grid.appendChild(card);
+        });
+    }
+    function renderArticles(){
+      const list = document.getElementById('articlesList'); list.innerHTML='';
+      DATA.articles.filter(a => (currentFilter==='all' || currentFilter==='article') && matchesSearch(a.title+' '+a.body))
+        .forEach(a=>{
+          const item = document.createElement('div'); item.className='list-item card';
+          item.innerHTML = `
+            <div class="body" style="width:100%">
+              <div class="eyebrow">Analysis</div>
+              <div style="display:flex; justify-content:space-between; gap:12px; align-items:baseline">
+                <h4 class="title">${a.title}</h4>
+                <div class="muted">${fmtDate(a.ts)}</div>
+              </div>
+              <div class="muted">By ${a.author}</div>
+              <div class="row" style="margin-top:8px"><button class="btn" onclick="openArticle('${a.id}', 'articles')">Read</button></div>
+            </div>`;
+          list.appendChild(item);
+        });
+    }
+    function renderAll(){ renderNews(); renderArticles(); }
+    function openArticle(id, type){
+      const item = (type==='news'? DATA.news: DATA.articles).find(x=>x.id===id); if(!item) return;
+      $('#modalEyebrow').textContent = type==='news' ? 'News' : 'Article';
+      $('#modalTitle').textContent = item.title;
+      $('#modalMeta').textContent = type==='news' ? fmtDate(item.ts) : `${fmtDate(item.ts)} • ${item.author}`;
+      $('#modalBody').innerHTML = type==='news' ? `<p>${item.excerpt}</p>` : item.body;
+      document.getElementById('articleModal').showModal();
+    }
+    function closeArticle(){ document.getElementById('articleModal').close(); }
+    function openSubscribe(){ document.getElementById('subscribeModal').showModal(); }
+    function closeSubscribe(){ document.getElementById('subscribeModal').close(); }
+    function completeSubscribe(){
+      const code = $('#subCode').value.trim().toUpperCase(); const email = $('#subEmail').value.trim();
+      if(!email || !email.includes('@')){ alert('Please enter a valid email.'); return; }
+      if(code!== 'WARTIME'){ alert('Wrong code — try WARTIME (demo).'); return; }
+      localStorage.setItem('wl_member','1'); unlockPremium(); closeSubscribe(); alert('Premium unlocked on this browser. Replace this with your real checkout later.');
+    }
+    function simulateLogin(){ const ok = confirm('If you are a member, click OK to unlock on this browser (demo).'); if(ok){ localStorage.setItem('wl_member','1'); unlockPremium(); } }
+    function unlockPremium(){
+      const card = document.getElementById('premiumCard'); card.classList.remove('locked');
+      const iframe = document.getElementById('premiumFrame');
+      iframe.srcdoc = `<style>html,body{margin:0;height:100%;background:#06090d;color:#fff;display:grid;place-items:center;font:16px system-ui}</style><div>Premium Map placeholder — paste your private embed iframe here</div>`;
+    }
+
+    function openTOS(){ alert('Add your Terms of Service page or route.'); }
+    function openPrivacy(){ alert('Add your Privacy Policy page or route.'); }
+
+    (async function init(){
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.getElementById('now').textContent = new Date().toLocaleString();
+      if(localStorage.getItem('wl_member')==='1') unlockPremium();
+      await loadCMS();    // <-- load data from CMS JSON
+      renderAll();
+      const newsGrid = document.getElementById('newsGrid');
+      const mq = matchMedia('(min-width: 901px)');
+      function applySpans(){ Array.from(newsGrid.children).forEach(c=> c.style.gridColumn = mq.matches ? 'span 4' : 'span 6'); }
+      const ro = new ResizeObserver(applySpans); ro.observe(newsGrid);
+    })();
+  </script>
+</body>
 </html>
