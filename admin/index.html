@@ -1,31 +1,21 @@
 <!doctype html>
 <html>
-
   <head>
     <meta charset="utf-8" />
     <title>Wartime Lebanon CMS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Netlify Identity (login) -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <!-- Decap (Netlify) CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </head>
-
   <body></body>
-
   <script>
-    // Send users back to /admin after logging in
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on("init", user => {
         if (!user) {
-          window.netlifyIdentity.on("login", () => {
-            document.location.href = "/admin/";
-          });
+          window.netlifyIdentity.on("login", () => { document.location.href = "/admin/"; });
         }
       });
     }
-
-    // === INLINE CMS CONFIG (no config.yml needed) ===
     window.CMS_MANUAL_INIT = true;
     CMS.init({
       config: {
@@ -43,18 +33,13 @@
                 file: "content/news.json",
                 format: "json",
                 fields: [
-                  {
-                    name: "items",
-                    label: "News Items",
-                    widget: "list",
-                    fields: [
-                      { name: "id", label: "ID", widget: "string" },
-                      { name: "tag", label: "Tag", widget: "string", default: "Update" },
-                      { name: "title", label: "Title", widget: "string" },
-                      { name: "ts", label: "Date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
-                      { name: "excerpt", label: "Summary", widget: "text" }
-                    ]
-                  }
+                  { name: "items", label: "News Items", widget: "list", fields: [
+                    { name: "id", label: "ID", widget: "string" },
+                    { name: "tag", label: "Tag", widget: "string", default: "Update" },
+                    { name: "title", label: "Title", widget: "string" },
+                    { name: "ts", label: "Date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
+                    { name: "excerpt", label: "Summary", widget: "text" }
+                  ]}
                 ]
               },
               {
@@ -63,18 +48,13 @@
                 file: "content/articles.json",
                 format: "json",
                 fields: [
-                  {
-                    name: "items",
-                    label: "Articles",
-                    widget: "list",
-                    fields: [
-                      { name: "id", label: "ID", widget: "string" },
-                      { name: "title", label: "Title", widget: "string" },
-                      { name: "author", label: "Author", widget: "string", default: "Wartime Lebanon Desk" },
-                      { name: "ts", label: "Date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
-                      { name: "body", label: "Body", widget: "markdown" }
-                    ]
-                  }
+                  { name: "items", label: "Articles", widget: "list", fields: [
+                    { name: "id", label: "ID", widget: "string" },
+                    { name: "title", label: "Title", widget: "string" },
+                    { name: "author", label: "Author", widget: "string", default: "Wartime Lebanon Desk" },
+                    { name: "ts", label: "Date", widget: "datetime", format: "YYYY-MM-DD", time_format: false },
+                    { name: "body", label: "Body", widget: "markdown" }
+                  ]}
                 ]
               }
             ]
@@ -83,5 +63,4 @@
       }
     });
   </script>
-
 </html>
